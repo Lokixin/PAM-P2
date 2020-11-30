@@ -30,9 +30,25 @@ import javax.servlet.http.Part;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
-import org.apache.xml.security.encryption.XMLCipher;
-import org.apache.xml.security.encryption.XMLEncryptionException;
 import utilities.CryptoTools;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.apache.xml.security.encryption.XMLEncryptionException;
+
 
 /**
  *
@@ -51,7 +67,7 @@ public class uploadXML extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         try {
             String appPath = request.getServletContext().getRealPath("");
             String SAVE_DIR = "upload";
@@ -98,7 +114,9 @@ public class uploadXML extends HttpServlet {
             xmlCipher.init(XMLCipher.ENCRYPT_MODE, key);
             CryptoTools.encryptXML(xmlCipher, key, saveDir);
             response.sendRedirect("menu.jsp");
-        } catch (XMLEncryptionException ex) {
+            } catch (IOException ex) {
+            Logger.getLogger(uploadXML.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ServletException ex) {
             Logger.getLogger(uploadXML.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

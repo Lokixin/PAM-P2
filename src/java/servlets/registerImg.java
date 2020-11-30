@@ -41,6 +41,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.spec.IvParameterSpec;
+import javax.servlet.RequestDispatcher;
 
 /**
  *
@@ -131,7 +132,7 @@ public class registerImg extends HttpServlet {
             filecontent = filePart.getInputStream();
 
             final byte[] bytes = new byte[1024];
-
+            
             /* 
                 If the users asks to encrypt the image, it is encrypted using
                 the Cipher with the AES algorithm and the SecretKey stored 
@@ -202,6 +203,10 @@ public class registerImg extends HttpServlet {
                 writer.println("<br/> ERROR: " + fne.getMessage());
             }
             System.out.println("Problems during file upload in disk. Error: " + fne.getMessage());
+            request.setAttribute("error", "El archivo no ha sido encontrado o su acceso ha sido denegado");
+            request.setAttribute("from", "registerImg.jsp");
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher("error.jsp");
+            requestDispatcher.forward(request, response);
 
         } catch (ClassNotFoundException | SQLException e) {
             // Catch exceptions on file management
@@ -210,7 +215,7 @@ public class registerImg extends HttpServlet {
                 writer.println("<br/> ERROR: " + e.getMessage());
             }
             System.out.println("Problems during file upload DB. Error: " + e.getMessage());
-
+            
         } finally {
 
             // Close opened files
